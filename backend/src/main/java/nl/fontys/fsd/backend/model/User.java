@@ -34,4 +34,5 @@ public class User {
     private String city;
     @Column(name = "country")
     private String country;
+
 }
