@@ -1,11 +1,13 @@
 import './App.css';
 import ProfilePage from './pages/ProfilePage';
+import HomePage from "./pages/HomePage";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-      <div className="App">
-        <ProfilePage />
-      </div>
+      <Layout>
+          <HomePage />
+      </Layout>
   );
 }
 

@@ -4,21 +4,6 @@
     min-height: 100vh;
 }
 
-/* HEADER */
-.profile-header {
-    background-color: var(--primary);
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.welcome-box {
-    background-color: rgba(255,255,255,0.2);
-    padding: 10px 15px;
-    border-radius: 4px;
-}
 
 /* BUTTON */
 .edit-container {

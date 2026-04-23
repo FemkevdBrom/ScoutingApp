@@ -43,13 +43,6 @@ const UserProfile = () => {
     return (
         <div className="profile-container">
 
-            {/* HEADER */}
-            <div className="profile-header">
-                <h1>Header/name</h1>
-                <div className="welcome-box">
-                    Welcome, {user.firstName}
-                </div>
-            </div>
 
             {/* BUTTON */}
             <div className="edit-container">

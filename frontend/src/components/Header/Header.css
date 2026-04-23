@@ -1,0 +1,23 @@
+.header {
+    height: 70px;
+    background-color: #2f4f6f;
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 30px;
+    font-size: 1.5rem;
+}
+
+.header-title {
+    font-weight: bold;
+}
+
+.header-user {
+    background-color: #4a6c8a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+}
