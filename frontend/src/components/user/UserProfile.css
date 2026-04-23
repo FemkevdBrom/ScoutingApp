@@ -1,0 +1,98 @@
+.profile-container {
+    padding: 20px;
+    background-color: var(--background);
+    min-height: 100vh;
+}
+
+/* HEADER */
+.profile-header {
+    background-color: var(--primary);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome-box {
+    background-color: rgba(255,255,255,0.2);
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+/* BUTTON */
+.edit-container {
+    margin: 15px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.edit-btn {
+    background-color: #3cb371;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* 👇 jouw hover effect */
+.edit-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* CONTENT */
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* CARD */
+.card {
+    background-color: var(--card);
+    padding: 15px;
+    border: 1px solid var(--border);
+}
+
+/* FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid var(--border);
+    background-color: #f9f9f9;
+}
+
+input:disabled {
+    background-color: #eee;
+}
+
+.field-box {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: #f0f0f0;
+}
+
+/* FROM-ROW, zorgt ervoor dat de rijen op de juiste afstand en hoeveelehid van elkaar afstaan later nog aanpassen naar specefieke afstanden voor straat, naam enzv.*/
+.form-row {
+    display: grid;
+    gap: 10px;
+}
+
+.form-row.one {
+    grid-template-columns: 1fr;
+}
+
+.form-row.two {
+    grid-template-columns: 1fr 1fr;
+}
+
+.form-row.three {
+    grid-template-columns: 1fr 1fr 1fr;
+}
