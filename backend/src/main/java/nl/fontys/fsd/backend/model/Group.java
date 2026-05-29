@@ -1,8 +1,10 @@
 package nl.fontys.fsd.backend.model;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
+import nl.fontys.fsd.backend.model.GroupEnum.*;
 
 @Getter
 @Setter
@@ -16,4 +18,29 @@ public class Group {
     private String description;
     @Column(name = "color")
     private String colorHex;
+
+    @Column(name = "group_email")
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "group_type")
+    private GroupType groupType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "group_status")
+    private GroupStatus groupStatus;
+
+    @Column(name = "group_age")
+    private String groupAge;
+
+    @Column(name = "scouting_group")
+    private String scoutingGroup;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "group_gender")
+    private GroupGender groupGender;
+
+    @OneToMany(mappedBy = "group")
+    @JsonManagedReference
+    private List<UserGroup> userGroups;
 }

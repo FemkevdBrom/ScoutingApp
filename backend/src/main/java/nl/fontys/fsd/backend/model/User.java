@@ -1,7 +1,10 @@
 package nl.fontys.fsd.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,11 +19,13 @@ public class User {
 
     @Column(name = "first_name")
     private String firstName;
+    @Column(name = "infix")
+    private String infix;
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "birth_date")
     private LocalDate birthDate;
-    @Column(name = "email")
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(name = "password")
     private String password;
@@ -34,5 +39,9 @@ public class User {
     private String city;
     @Column(name = "country")
     private String country;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<UserGroup> userGroups;
 
 }

@@ -1,4 +1,53 @@
-FROM ubuntu:latest
-LABEL authors="femke"
+version: '3.8'
 
-ENTRYPOINT ["top", "-b"]
+services:
+  postgres:
+    image: postgres:17
+    container_name: scoutingapp-db
+    environment:
+      POSTGRES_DB: scoutingappdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: DBf0r3v3rything
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scouting-net
+
+  backend:
+    build: ./backend
+    container_name: scouting-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/scoutingappdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: DBf0r3v3rything
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - scouting-net
+
+  frontend:
+    build: ./frontend
+    container_name: scouting-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - scouting-net
+
+volumes:
+  postgres_data:
+
+networks:
+  scouting-net:
+    driver: bridge
