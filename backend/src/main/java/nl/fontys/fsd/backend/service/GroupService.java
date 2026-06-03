@@ -1,5 +1,6 @@
 package nl.fontys.fsd.backend.service;
 
+import nl.fontys.fsd.backend.dto.GroupCardDTO;
 import nl.fontys.fsd.backend.dto.GroupDetailsDTO;
 import nl.fontys.fsd.backend.dto.GroupInfoDTO;
 import nl.fontys.fsd.backend.dto.PersonDTO;
@@ -20,9 +21,31 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
-    public List<Group> getGroupsForUser(Long userId) {
-        return groupRepository.findGroupsByUserId(userId);
+    public List<GroupCardDTO> getGroupCardsForUser(Long userId) {
+
+        var groups = groupRepository.findGroupsForUser(userId);
+
+        System.out.println("Aantal gevonden groepen: " + groups.size());
+
+        groups.forEach(g ->
+                System.out.println(
+                        "Group gevonden: " +
+                                g.getId() +
+                                " - " +
+                                g.getName()
+                )
+        );
+
+        return groups.stream()
+                .map(g -> new GroupCardDTO(
+                        g.getId(),
+                        g.getName(),
+                        g.getDescription(),
+                        g.getColorHex()
+                ))
+                .toList();
     }
+
 
     public GroupDetailsDTO getGroupDetails(Long groupId) {
 

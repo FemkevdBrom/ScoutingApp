@@ -17,7 +17,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User login(String email, String password) {
+    /* public User login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -26,7 +26,40 @@ public class AuthService {
         }
 
         return user;
+    } */
+
+    /*public User login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!password.equals(user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return user;
+    }*/
+
+    public User login(String email, String password) {
+        System.out.println("=== LOGIN ATTEMPT ===");
+        System.out.println("Email: " + email);
+        System.out.println("Input password: " + password);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    System.out.println("ERROR: User not found with email: " + email);
+                    return new RuntimeException("User not found");
+                });
+
+        System.out.println("User found in DB!");
+        System.out.println("DB password: " + user.getPassword());
+        System.out.println("Passwords match? " + password.equals(user.getPassword()));
+
+        if (!password.equals(user.getPassword())) {
+            System.out.println("ERROR: Password does not match!");
+            throw new RuntimeException("Invalid password");
+        }
+
+        System.out.println("LOGIN SUCCESS!");
+        return user;
     }
-
-
 }

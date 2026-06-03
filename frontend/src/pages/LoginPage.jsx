@@ -1,5 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
@@ -7,6 +9,7 @@ function LoginPage() {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);     // ← Binnen de functie!
 
     const handleLogin = async () => {
         try {
@@ -22,11 +25,9 @@ function LoginPage() {
                 throw new Error("Login mislukt");
             }
 
-            const user = await response.json();
+            const userData = await response.json();
 
-            localStorage.setItem("userId", user.id);
-            localStorage.setItem("userName", user.firstName);
-
+            login(userData);
             navigate("/home");
         } catch (err) {
             setError(err.message);
@@ -40,18 +41,20 @@ function LoginPage() {
             <input
                 type="email"
                 placeholder="Email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
 
             <input
                 type="password"
                 placeholder="Wachtwoord"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
 
             <button onClick={handleLogin}>Login</button>
 
-            {error && <p>{error}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
     );
 }

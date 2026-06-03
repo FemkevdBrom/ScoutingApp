@@ -1,5 +1,6 @@
 package nl.fontys.fsd.backend.controller;
 
+import nl.fontys.fsd.backend.dto.GroupCardDTO;
 import nl.fontys.fsd.backend.dto.GroupDetailsDTO;
 import nl.fontys.fsd.backend.model.Group;
 import nl.fontys.fsd.backend.repository.GroupRepository;
@@ -19,8 +20,9 @@ public class GroupController {
     }
 
     @GetMapping("/my")
-    public List<Group> getMyGroups(@RequestParam Long userId) {
-        return groupService.getGroupsForUser(userId);
+    public List<GroupCardDTO> getMyGroups(@RequestParam Long userId) {
+        System.out.println("Controller ontvangen userId: " + userId);
+        return groupService.getGroupCardsForUser(userId);
     }
 
     @GetMapping("/{id}")
@@ -32,4 +34,5 @@ public class GroupController {
     public GroupDetailsDTO getGroupDetails(@PathVariable Long id) {
         return groupService.getGroupDetails(id);
     }
+
 }

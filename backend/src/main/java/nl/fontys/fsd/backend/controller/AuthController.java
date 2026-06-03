@@ -27,16 +27,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    //tijdelijk om wachtwoord te resetten:
-    @PostMapping("/reset-password-dev")
-    public ResponseEntity<?> resetPassword(@RequestParam String email,
-                                           @RequestParam String newPassword) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        return ResponseEntity.ok("Password updated");
-    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
         try {

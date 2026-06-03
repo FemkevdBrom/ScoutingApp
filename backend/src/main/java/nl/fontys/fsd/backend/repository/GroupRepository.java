@@ -12,19 +12,20 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query(value = """
-        SELECT g.*
-        FROM groups g, user_groups ug
-        WHERE ug.user_id = user_id AND ug.group_id = g.id
-    """, nativeQuery = true)
-    List<Group> findGroupsByUserId(@Param("userId") Long userId);
+SELECT g.*
+FROM groups g
+JOIN user_groups ug ON ug.group_id = g.id
+WHERE ug.user_id = :userId
+ORDER BY g.name
+""", nativeQuery = true)
+    List<Group> findGroupsForUser(@Param("userId") Long userId);
 
-    @Query("""
-SELECT g FROM Group g
-LEFT JOIN FETCH g.userGroups ug
-LEFT JOIN FETCH ug.user
-LEFT JOIN FETCH ug.role
-WHERE g.id = :id
-""")
-    Optional<Group> findByIdWithUsers(Long id);
-
+@Query("""
+    SELECT g FROM Group g
+    LEFT JOIN FETCH g.userGroups ug
+    LEFT JOIN FETCH ug.user
+    LEFT JOIN FETCH ug.role
+    WHERE g.id = :id
+    """)
+Optional<Group> findByIdWithUsers(@Param("id") Long id);
 }
