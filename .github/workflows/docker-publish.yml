@@ -34,6 +34,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ==================== FIX GRADLE PERMISSIONS ====================
+      # Gradle script needs execute permission on Linux runner
+      - name: Make Gradle executable
+        working-directory: ./backend
+        run: chmod +x ./gradlew
+
       # ==================== BACKEND: JAVA + GRADLE ====================
       # Setup Java because we need it to run Gradle tests and build
       - name: Set up JDK 21
