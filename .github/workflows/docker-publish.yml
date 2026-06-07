@@ -100,7 +100,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # ==================== BUILD & PUSH DOCKER IMAGES ====================
-
       # Build and push Backend Docker image
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
@@ -108,7 +107,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ toLowerCase(github.event.repository.name) }}-backend:${{ github.sha }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/scoutingapp-backend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -120,7 +119,7 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ toLowerCase(github.event.repository.name) }}-frontend:${{ github.sha }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/scoutingapp-frontend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
