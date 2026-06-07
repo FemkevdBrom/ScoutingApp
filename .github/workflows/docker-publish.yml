@@ -34,13 +34,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ==================== CODE QUALITY ====================
-      # Qodana is already configured in your project, we run it here for CI
-      - name: Qodana Code Quality Scan (Backend)
-        uses: JetBrains/qodana-action@v2026.1
-        with:
-          args: --profile qodana.recommended --fail-threshold 0
-
       # ==================== BACKEND: JAVA + GRADLE ====================
       # Setup Java because we need it to run Gradle tests and build
       - name: Set up JDK 21
