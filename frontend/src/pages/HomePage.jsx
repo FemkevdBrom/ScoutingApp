@@ -21,7 +21,7 @@ export default function HomePage() {
 
         console.log(`Fetching groups for userId: ${user.id}`);
 
-        fetch(`http://localhost:8080/api/groups/my?userId=${user.id}`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/groups/my?userId=${user.id}`)
             .then((res) => {
                 console.log("Response status:", res.status);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);

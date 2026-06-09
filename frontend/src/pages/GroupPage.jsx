@@ -10,7 +10,7 @@ function GroupPage({groupId}) {
     const [group, setGroup] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/groups/${groupId}`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/groups/${groupId}`)
             .then(res => res.json())
             .then(data => setGroup(data));
     }, [groupId]);
