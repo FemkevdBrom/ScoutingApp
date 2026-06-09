@@ -1,6 +1,7 @@
 package nl.fontys.fsd.backend.controller;
 
 
+import nl.fontys.fsd.backend.dto.JwtResponseDTO;
 import nl.fontys.fsd.backend.dto.LoginRequestDTO;
 import nl.fontys.fsd.backend.dto.UserResponseDTO;
 import nl.fontys.fsd.backend.model.User;
@@ -30,14 +31,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
         try {
-            User user = authService.login(request.getEmail(), request.getPassword());
-
-            UserResponseDTO response = new UserResponseDTO(
-                    user.getId(),
-                    user.getEmail(),
-                    user.getFirstName()
-            );
-            return ResponseEntity.ok(response);
+            String token = authService.login(request.getEmail(), request.getPassword());
+            return ResponseEntity.ok(new JwtResponseDTO(token));  // maak deze DTO
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }

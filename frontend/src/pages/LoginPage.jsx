@@ -7,11 +7,15 @@ function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);     // ← Binnen de functie!
+    const { login } = useContext(AuthContext);
 
     const handleLogin = async () => {
+        setLoading(true);
+        setError("");
+
         try {
             const response = await fetch("http://localhost:8080/auth/login", {
                 method: "POST",
@@ -22,37 +26,38 @@ function LoginPage() {
             });
 
             if (!response.ok) {
-                throw new Error("Login mislukt");
+                throw new Error("Ongeldige email of wachtwoord");
             }
 
-            const userData = await response.json();
-
-            login(userData);
+            const data = await response.json();   // { token: "..." }
+            login(data.token);                    // Alleen de token doorgeven
             navigate("/home");
+
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div>
             <h2>Login</h2>
-
             <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
-
             <input
                 type="password"
                 placeholder="Wachtwoord"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-
-            <button onClick={handleLogin}>Login</button>
+            <button onClick={handleLogin} disabled={loading}>
+                {loading ? "Bezig..." : "Login"}
+            </button>
 
             {error && <p style={{ color: "red" }}>{error}</p>}
         </div>

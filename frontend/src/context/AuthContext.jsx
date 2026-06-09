@@ -5,22 +5,22 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    // Haal user uit localStorage bij opstarten
+    // Haal token uit localStorage bij opstarten
     useEffect(() => {
-        const savedUser = localStorage.getItem("user");
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
+        const savedToken = localStorage.getItem("token");
+        if (savedToken) {
+            setUser({ token: savedToken });
         }
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+    const login = (token) => {
+        localStorage.setItem("token", token);
+        setUser({ token });
     };
 
     const logout = () => {
+        localStorage.removeItem("token");
         setUser(null);
-        localStorage.removeItem("user");
     };
 
     return (

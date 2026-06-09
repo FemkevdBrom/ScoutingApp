@@ -1,65 +1,32 @@
 package nl.fontys.fsd.backend.service;
 
-import nl.fontys.fsd.backend.model.User;
 import nl.fontys.fsd.backend.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import nl.fontys.fsd.backend.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthService(UserRepository userRepository,
+                       JwtService jwtService,
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
-    /* public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public String login(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+        );
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return user;
-    } */
-
-    /*public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!password.equals(user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return user;
-    }*/
-
-    public User login(String email, String password) {
-        System.out.println("=== LOGIN ATTEMPT ===");
-        System.out.println("Email: " + email);
-        System.out.println("Input password: " + password);
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    System.out.println("ERROR: User not found with email: " + email);
-                    return new RuntimeException("User not found");
-                });
-
-        System.out.println("User found in DB!");
-        System.out.println("DB password: " + user.getPassword());
-        System.out.println("Passwords match? " + password.equals(user.getPassword()));
-
-        if (!password.equals(user.getPassword())) {
-            System.out.println("ERROR: Password does not match!");
-            throw new RuntimeException("Invalid password");
-        }
-
-        System.out.println("LOGIN SUCCESS!");
-        return user;
+        return jwtService.generateToken(authentication);
     }
 }
