@@ -60,6 +60,12 @@ function LoginPage() {
             </button>
 
             {error && <p style={{ color: "red" }}>{error}</p>}
+
+            <hr/>
+            <p>Nog geen account?</p>
+            <Button onClick={() => navigate("/register")}>
+                Registeren
+            </Button>
         </div>
     );
 }

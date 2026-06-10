@@ -33,9 +33,6 @@ public class Group {
     @Column(name = "group_age")
     private String groupAge;
 
-    @Column(name = "scouting_group")
-    private String scoutingGroup;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "group_gender")
     private GroupGender groupGender;
@@ -43,4 +40,11 @@ public class Group {
     @OneToMany(mappedBy = "group")
     @JsonManagedReference
     private List<UserGroup> userGroups;
+
+    @ManyToMany
+    @JoinTable(
+            name = "group_scouting_group",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "scouting_group_id"))
+    private List<ScoutingGroup> scoutingGroups;
 }

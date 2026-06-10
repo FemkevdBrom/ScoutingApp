@@ -44,4 +44,11 @@ public class User {
     @JsonManagedReference
     private List<UserGroup> userGroups;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_scouting_group",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "scouting_group_id"))
+    private List<ScoutingGroup> scoutingGroups;
+
 }

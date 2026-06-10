@@ -1,8 +1,9 @@
 package nl.fontys.fsd.backend.controller;
 
-
+import jakarta.validation.Valid;
 import nl.fontys.fsd.backend.dto.JwtResponseDTO;
 import nl.fontys.fsd.backend.dto.LoginRequestDTO;
+import nl.fontys.fsd.backend.dto.RegisterRequestDTO;
 import nl.fontys.fsd.backend.dto.UserResponseDTO;
 import nl.fontys.fsd.backend.model.User;
 import nl.fontys.fsd.backend.repository.UserRepository;
@@ -22,7 +23,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public  AuthController(AuthService authService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthService authService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authService = authService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -32,9 +33,21 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
         try {
             String token = authService.login(request.getEmail(), request.getPassword());
-            return ResponseEntity.ok(new JwtResponseDTO(token));  // maak deze DTO
+            return ResponseEntity.ok(new JwtResponseDTO(token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
+        try {
+            authService.register(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Registratie succesvol");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Er is iets misgegaan");
         }
     }
 }
