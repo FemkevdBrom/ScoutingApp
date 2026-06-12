@@ -63,9 +63,9 @@ function LoginPage() {
 
             <hr/>
             <p>Nog geen account?</p>
-            <Button onClick={() => navigate("/register")}>
+            <button onClick={() => navigate("/register")}>
                 Registeren
-            </Button>
+            </button>
         </div>
     );
 }
