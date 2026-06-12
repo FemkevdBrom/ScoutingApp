@@ -1,33 +1,22 @@
-name: CI - Build, Test & Publish Docker images
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+name: CD - Deploy to Staging & Production
 
 on:
   push:
     branches: [ "main" ]
-    # Publish semver tags as releases.
     tags: [ 'v*' ]
-  pull_request:
-    branches: [ "main" ]
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  BACKEND_IMAGE: ghcr.io/femkevdbrom/scoutingapp-backend:${{ github.sha }}
+  FRONTEND_IMAGE: ghcr.io/femkevdbrom/scoutingapp-frontend:${{ github.sha }}
 
 jobs:
-  build:
-
+  # ==================== 1. BUILD & TEST (CI-deel) ====================
+  build-and-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
 
     steps:
@@ -35,13 +24,11 @@ jobs:
         uses: actions/checkout@v4
 
       # ==================== FIX GRADLE PERMISSIONS ====================
-      # Gradle script needs execute permission on Linux runner
       - name: Make Gradle executable
         working-directory: ./backend
         run: chmod +x ./gradlew
 
       # ==================== BACKEND: JAVA + GRADLE ====================
-      # Setup Java because we need it to run Gradle tests and build
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -49,77 +36,106 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # Run backend tests (important for school - shows you test your code)
       - name: Run Backend Tests
         working-directory: ./backend
         run: ./gradlew test --no-daemon
 
-      # Build the backend JAR file
       - name: Build Backend with Gradle
         working-directory: ./backend
         run: ./gradlew build -x test --no-daemon
 
       # ==================== FRONTEND: REACT ====================
-      # Install dependencies and run tests for React (Jest)
       - name: Run Frontend Tests
         working-directory: ./frontend
         run: |
           npm ci
           npm test -- --watchAll=false --ci
 
-      # Build React application for production
       - name: Build Frontend
         working-directory: ./frontend
         run: npm run build
         env:
-          CI: false #ESLint warnings stopte de build.
+          CI: false
 
       # ==================== DOCKER SETUP ====================
-      # Set up BuildKit Docker container builder to be able to build
-      # multi-platform images and export cache
-      # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226
 
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into registry
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/femkevdbrom/scoutingapp-backend,${{ env.REGISTRY }}/femkevdbrom/scoutingapp-frontend
 
       # ==================== BUILD & PUSH DOCKER IMAGES ====================
-      # Build and push Backend Docker image
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: ./backend
           file: ./backend/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/femkevdbrom/scoutingapp-backend:${{ github.sha }}
+          push: true
+          tags: ${{ env.BACKEND_IMAGE }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Build and push Frontend Docker image
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/femkevdbrom/scoutingapp-frontend:${{ github.sha }}
+          push: true
+          tags: ${{ env.FRONTEND_IMAGE }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ==================== 2. DEPLOY TO STAGING ====================
+  deploy-staging:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: staging
+    if: success()
+
+    steps:
+      - name: Deploy to Staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_STAGING }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/youruser/scoutingapp
+            echo "TAG=${{ github.sha }}" > .env
+            docker compose pull
+            docker compose up -d --force-recreate
+            echo "✅ Deployed to Staging: ${{ env.BACKEND_IMAGE }}"
+
+  # ==================== 3. DEPLOY TO PRODUCTION ====================
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: ScoutingApp / production   # Dit triggert manual approval
+    if: success()
+
+    steps:
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_PROD }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/youruser/scoutingapp
+            echo "TAG=${{ github.sha }}" > .env
+            docker compose pull
+            docker compose up -d --force-recreate
+            echo "✅ Deployed to Production: ${{ env.BACKEND_IMAGE }}"
