@@ -80,13 +80,17 @@ public class GroupService {
                 })
                 .toList();
 
+        String scoutingGroupName = (group.getScoutingGroups() != null && !group.getScoutingGroups().isEmpty())
+                ? group.getScoutingGroups().get(0).getName()
+                : "-";
+
         GroupInfoDTO info = new GroupInfoDTO(
                 defaultValue(group.getDescription()),
                 defaultValue(group.getEmail()),
                 group.getGroupType() != null ? group.getGroupType().name() : "-",
                 group.getGroupStatus() != null ? group.getGroupStatus().name() : "-",
                 defaultValue(group.getGroupAge()),
-                defaultValue(group.getScoutingGroup())
+                scoutingGroupName
         );
 
         return new GroupDetailsDTO(group.getName(), leaders, members, info);
