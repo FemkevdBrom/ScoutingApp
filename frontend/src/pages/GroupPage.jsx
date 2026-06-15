@@ -1,17 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import LeadersTable from "../components/GroupPage/LeadersTable";
-import MembersTable from "../components/GroupPage/MembersTable";
-import GroupInfo from "../components/GroupPage/GroupInfo";
 import {useNavigate, useParams} from "react-router-dom";
-import {AuthContext} from "./contexts/AuthContext";
-import App from "../App";
+import {AuthContext} from "../context/AuthContext";
 
 export default function GroupPage() {
     const {id} = useParams();
     const {user} = useContext(AuthContext);
     const navigate = useNavigate();
     const [group, setGroup] = useState(null);
-
 
     useEffect(() => {
         if (!user?.token) return;
@@ -25,8 +20,8 @@ export default function GroupPage() {
     if (!group) return <div>Laden...</div>;
 
     const role = group.userRole?.toUpperCase();
-    const IsLeider = role === "Leider" || role === "TeamLeider";
-    const IsTeamLeider = role === "TeamLeider";
+    const isLeider = role === 'LEIDER' || role === 'TEAMLEIDER';
+    const isTeamleider = role === 'TEAMLEIDER';
 
     return (
         <div className="group-page">
@@ -41,7 +36,6 @@ export default function GroupPage() {
                 <p>Beschrijving: {group.info?.description}</p>
             </section>
 
-            {/* Leiding — zichtbaar voor iedereen */}
             <section>
                 <h2>Leiding</h2>
                 <ul>
@@ -51,13 +45,12 @@ export default function GroupPage() {
                             onClick={() => isTeamleider && navigate(`/users/${l.id}`)}
                             style={{cursor: isTeamleider ? 'pointer' : 'default'}}
                         >
-                            {l.name} — {l.role}
+                            {l.fullName} — {l.role}
                         </li>
                     ))}
                 </ul>
             </section>
 
-            {/* Leden — alleen voor leider en teamleider */}
             {isLeider && (
                 <section>
                     <h2>Leden</h2>
@@ -68,14 +61,13 @@ export default function GroupPage() {
                                 onClick={() => isTeamleider && navigate(`/users/${m.id}`)}
                                 style={{cursor: isTeamleider ? 'pointer' : 'default'}}
                             >
-                                {m.name}
+                                {m.fullName}
                             </li>
                         ))}
                     </ul>
                 </section>
             )}
 
-            {/* Teamleider knoppen */}
             {isTeamleider && (
                 <section>
                     <button onClick={() => navigate(`/groups/${id}/edit`)}>
