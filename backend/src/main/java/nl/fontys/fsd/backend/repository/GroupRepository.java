@@ -1,4 +1,5 @@
 package nl.fontys.fsd.backend.repository;
+import nl.fontys.fsd.backend.dto.GroupCardDTO;
 import nl.fontys.fsd.backend.model.Group;
 import nl.fontys.fsd.backend.model.User;
 import org.springframework.data.jpa.repository.*;
@@ -28,4 +29,15 @@ ORDER BY g.name
     WHERE g.id = :id
     """)
 Optional<Group> findByIdWithUsers(@Param("id") Long id);
+
+@Query("""
+    SELECT new nl.fontys.fsd.backend.dto.GroupCardDTO(
+    g.id, g.name, g.description, g.colorHex, r.name
+    )
+    FROM Group group
+    JOIN g.userGroups ug
+    JOIN ug.role r 
+    WHERE ug.user.id = :userId
+""")
+    List<GroupCardDTO> findGroupsWithRoleForUser(@Param("userId") Long userId);
 }

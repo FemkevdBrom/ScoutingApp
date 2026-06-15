@@ -9,13 +9,15 @@ public class GroupDetailsDTO {
     private List<PersonDTO> leaders;
     private List<PersonDTO> members;
     private GroupInfoDTO info;
+    private String userRole;
 
     public GroupDetailsDTO() {}
 
-    public GroupDetailsDTO(String groupName,  List<PersonDTO> leaders, List<PersonDTO> members, GroupInfoDTO info) {
+    public GroupDetailsDTO(String groupName,  List<PersonDTO> leaders, List<PersonDTO> members, GroupInfoDTO info, String userRole) {
         this.groupName = groupName;
         this.leaders = leaders;
         this.members = members;
         this.info = info;
+        this.userRole = userRole;
     }
 }

@@ -7,6 +7,9 @@ import GroupPage from "./pages/GroupPage";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import UserDetailPage from "./pages/UserDetailPage";
+import GroupEditPage from "./pages/GroupEditPage";
+import ManageMembersPage from "./pages/ManageMembersPage";
 
 function App() {
     return (
@@ -18,6 +21,9 @@ function App() {
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/groups/:id/members" element={<ManageMembersPage />} />
+                <Route path="/groups/:id/edit" element={<GroupEditPage />} />
+                <Route path="/users/:id" element={<UserDetailPage />} />
             </Routes>
         </Layout>
     );
