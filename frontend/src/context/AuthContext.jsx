@@ -50,4 +50,3 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-export const AuthContext = CreateContext();
