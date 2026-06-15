@@ -7,6 +7,9 @@ import nl.fontys.fsd.backend.model.UserGroup;
 import nl.fontys.fsd.backend.model.Role;
 import nl.fontys.fsd.backend.model.User;
 import nl.fontys.fsd.backend.repository.GroupRepository;
+import nl.fontys.fsd.backend.repository.RoleRepository;
+import nl.fontys.fsd.backend.repository.UserGroupRepository;
+import nl.fontys.fsd.backend.repository.UserRepository;
 import nl.fontys.fsd.backend.service.GroupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,16 +29,20 @@ class GroupServiceTest {
 
     @Mock
     private GroupRepository groupRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private RoleRepository roleRepository;
+    @Mock
+    private UserGroupRepository userGroupRepository;
 
     private GroupService groupService;
-
     private Group testGroup;
 
     @BeforeEach
     void setUp() {
-        groupService = new GroupService(groupRepository);
+        groupService = new GroupService(groupRepository, userRepository, roleRepository, userGroupRepository);
 
-        // Basis groep
         testGroup = new Group();
         testGroup.setId(10L);
         testGroup.setName("Welpen Groep A");
@@ -45,15 +52,15 @@ class GroupServiceTest {
 
     @Test
     void getGroupCardsForUser_shouldReturnGroupCards() {
-        when(groupRepository.findGroupsForUser(1L)).thenReturn(List.of(testGroup));
+        GroupCardDTO card = new GroupCardDTO(10L, "Welpen Groep A", "Leuke actieve groep", "#FF5733", "LID");
+        when(groupRepository.findGroupsForUser(1L)).thenReturn(List.of(card));
 
         List<GroupCardDTO> result = groupService.getGroupCardsForUser(1L);
 
         assertEquals(1, result.size());
-        GroupCardDTO card = result.get(0);
-        assertEquals(10L, card.getId());
-        assertEquals("Welpen Groep A", card.getName());
-        assertEquals("#FF5733", card.getColorHex());
+        assertEquals(10L, result.get(0).getId());
+        assertEquals("Welpen Groep A", result.get(0).getName());
+        assertEquals("#FF5733", result.get(0).getColorHex());
     }
 
     @Test
@@ -67,14 +74,14 @@ class GroupServiceTest {
 
     @Test
     void getGroupDetails_shouldReturnGroupDetails() {
-        // Maak minimale setup voor getGroupDetails
         User testUser = new User();
+        testUser.setId(1L);
         testUser.setFirstName("Jan");
         testUser.setLastName("Test");
         testUser.setBirthDate(LocalDate.of(2010, 5, 15));
 
         Role leaderRole = new Role();
-        leaderRole.setName("LEADER");
+        leaderRole.setName("LEIDER");
 
         UserGroup userGroup = new UserGroup();
         userGroup.setUser(testUser);
@@ -84,7 +91,7 @@ class GroupServiceTest {
 
         when(groupRepository.findByIdWithUsers(10L)).thenReturn(Optional.of(testGroup));
 
-        GroupDetailsDTO result = groupService.getGroupDetails(10L);
+        GroupDetailsDTO result = groupService.getGroupDetails(10L, 1L);
 
         assertNotNull(result);
         assertEquals("Welpen Groep A", result.getGroupName());
