@@ -9,7 +9,11 @@ export default function Header() {
 
     return (
         <div className="header">
-            <div className="header-title">Scouting App</div>
+            <div className="header-title"
+            onClick={() => navigate('/home')}
+            style={{cursor: 'pointer'}}>
+            Scouting App
+            </div>
             {user && (
                 <button className="header-user" onClick={() => navigate('/profile')}>
                     Welkom, {user.firstName}

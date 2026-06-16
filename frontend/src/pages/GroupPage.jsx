@@ -2,6 +2,10 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthFetch } from '../hooks/useAuthFetch';
 
+import GroupInfoCard from '../components/GroupPage/GroupInfoCard';
+import PersonCard from '../components/GroupPage/PersonCard';
+import './GroupPage.css';   // ← Vergeet dit niet!
+
 export default function GroupPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -10,69 +14,79 @@ export default function GroupPage() {
         `${process.env.REACT_APP_API_URL}/api/groups/${id}`
     );
 
-    if (loading) return <div>Laden...</div>;
-    if (error) return <div>Fout bij ophalen groep: {error}</div>;
+    if (loading) return <div className="loading">Laden...</div>;
+    if (error) return <div className="error">Fout bij ophalen groep: {error}</div>;
     if (!group) return <div>Groep niet gevonden</div>;
 
     const role = group.userRole?.toUpperCase();
     const isLeider = role === 'LEIDER' || role === 'TEAMLEIDER';
     const isTeamleider = role === 'TEAMLEIDER';
 
+    const handlePersonClick = (personId) => {
+        if (isTeamleider) {
+            navigate(`/users/${personId}`);
+        }
+    };
+
     return (
         <div className="group-page">
-            <h1>{group.groupName}</h1>
+            <h1 className="group-title">{group.groupName || group.name}</h1>
 
-            <section>
-                <h2>Groepsinformatie</h2>
-                <p>Email: {group.info?.groupEmail}</p>
-                <p>Type: {group.info?.groupType}</p>
-                <p>Leeftijd: {group.info?.groupAge}</p>
-                <p>Status: {group.info?.groupStatus}</p>
-                <p>Beschrijving: {group.info?.description}</p>
-            </section>
+            <div className="group-content">
+                <GroupInfoCard group={group} />
 
-            <section>
-                <h2>Leiding</h2>
-                <ul>
-                    {group.leaders?.map((l, i) => (
-                        <li
-                            key={i}
-                            onClick={() => isTeamleider && navigate(`/users/${l.id}`)}
-                            style={{cursor: isTeamleider ? 'pointer' : 'default'}}
-                        >
-                            {l.fullName} — {l.role}
-                        </li>
-                    ))}
-                </ul>
-            </section>
+                {/* Leiding */}
+                <div className="section">
+                    <h2>Leiding</h2>
+                    <div className="cards-container">
+                        {group.leaders?.length > 0 ? (
+                            group.leaders.map((leader) => (
+                                <PersonCard
+                                    key={leader.id}
+                                    person={leader}
+                                    onClick={() => handlePersonClick(leader.id)}
+                                    isClickable={isTeamleider}
+                                />
+                            ))
+                        ) : (
+                            <p>Geen leiding gevonden</p>
+                        )}
+                    </div>
+                </div>
 
-            {isLeider && (
-                <section>
-                    <h2>Leden</h2>
-                    <ul>
-                        {group.members?.map((m, i) => (
-                            <li
-                                key={i}
-                                onClick={() => isTeamleider && navigate(`/users/${m.id}`)}
-                                style={{cursor: isTeamleider ? 'pointer' : 'default'}}
-                            >
-                                {m.fullName}
-                            </li>
-                        ))}
-                    </ul>
-                </section>
-            )}
+                {/* Leden - alleen voor leiders */}
+                {isLeider && (
+                    <div className="section">
+                        <h2>Leden</h2>
+                        <div className="cards-container">
+                            {group.members?.length > 0 ? (
+                                group.members.map((member) => (
+                                    <PersonCard
+                                        key={member.id}
+                                        person={member}
+                                        onClick={() => handlePersonClick(member.id)}
+                                        isClickable={isTeamleider}
+                                    />
+                                ))
+                            ) : (
+                                <p>Geen leden gevonden</p>
+                            )}
+                        </div>
+                    </div>
+                )}
 
-            {isTeamleider && (
-                <section>
-                    <button onClick={() => navigate(`/groups/${id}/edit`)}>
-                        Groepsgegevens aanpassen
-                    </button>
-                    <button onClick={() => navigate(`/groups/${id}/members`)}>
-                        Leden beheren
-                    </button>
-                </section>
-            )}
+                {/* Acties */}
+                {isTeamleider && (
+                    <div className="actions">
+                        <button onClick={() => navigate(`/groups/${id}/edit`)}>
+                            Groepsgegevens aanpassen
+                        </button>
+                        <button onClick={() => navigate(`/groups/${id}/members`)}>
+                            Leden beheren
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

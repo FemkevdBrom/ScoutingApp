@@ -1,0 +1,31 @@
+.info-card {
+    background: #eaeaea;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.info-card h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2f4f6f;
+    font-size: 1.4rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px 25px;
+    line-height: 1.6;
+}
+
+.info-grid strong {
+    color: #2f4f6f;
+}
+
+.description {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #d1d1d1;
+}
