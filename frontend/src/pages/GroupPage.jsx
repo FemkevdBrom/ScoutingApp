@@ -1,23 +1,18 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
-import {AuthContext} from "../context/AuthContext";
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuthFetch } from '../hooks/useAuthFetch';
 
 export default function GroupPage() {
-    const {id} = useParams();
-    const {user} = useContext(AuthContext);
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [group, setGroup] = useState(null);
 
-    useEffect(() => {
-        if (!user?.token) return;
-        fetch(`${process.env.REACT_APP_API_URL}/api/groups/${id}`, {
-            headers: {Authorization: `Bearer ${user.token}`}
-        })
-            .then(res => res.json())
-            .then(data => setGroup(data));
-    }, [id, user]);
+    const { data: group, loading, error } = useAuthFetch(
+        `${process.env.REACT_APP_API_URL}/api/groups/${id}`
+    );
 
-    if (!group) return <div>Laden...</div>;
+    if (loading) return <div>Laden...</div>;
+    if (error) return <div>Fout bij ophalen groep: {error}</div>;
+    if (!group) return <div>Groep niet gevonden</div>;
 
     const role = group.userRole?.toUpperCase();
     const isLeider = role === 'LEIDER' || role === 'TEAMLEIDER';
