@@ -13,6 +13,12 @@ export default function HomePage() {
         console.log("=== HomePage Debug ===");
         console.log("User:", user);
         console.log("User ID:", user?.id);
+        console.log("Token aanwezig?", !!user?.token);
+
+        if (!user?.token) {
+            console.log("Geen token gevonden, wachten...");
+            return;
+        }
 
         if (!user?.id) {
             console.log("Geen user ID gevonden, wachten...");
@@ -21,7 +27,14 @@ export default function HomePage() {
 
         console.log(`Fetching groups for userId: ${user.id}`);
 
-        fetch(`${process.env.REACT_APP_API_URL}/api/groups/my?userId=${user.id}`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/groups/my?userId=${user.id}`,
+        {
+            method: 'GET',
+                headers:{
+                'Authorization': `Bearer ${user.token}`,
+                'content-type':'application/json'
+            }
+        })
             .then((res) => {
                 console.log("Response status:", res.status);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
