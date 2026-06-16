@@ -41,6 +41,6 @@ export const useAuthFetch = (url, options = {}) => {
             }
         };
         fetchData();
-    },[url, user?.token, JSON.stringify(options)]);
+    },[url, user?.token]);
     return {data, error, loading};
 };
