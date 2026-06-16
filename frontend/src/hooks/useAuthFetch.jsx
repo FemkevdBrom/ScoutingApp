@@ -1,14 +1,15 @@
-import {useState, useEffect, useContext} from 'react';
-import {AuthContext} from "../context/AuthContext";
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 export const useAuthFetch = (url, options = {}) => {
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!user?.token) {
+        if (!url || !user?.token) {
             setLoading(false);
             return;
         }
@@ -18,7 +19,7 @@ export const useAuthFetch = (url, options = {}) => {
                 setLoading(true);
                 setError(null);
 
-                const respone  = await fetch(url, {
+                const response = await fetch(url, {
                     ...options,
                     headers: {
                         'Authorization': `Bearer ${user.token}`,
@@ -27,11 +28,11 @@ export const useAuthFetch = (url, options = {}) => {
                     },
                 });
 
-                if (response.ok) {
-                    throw new Error('HTTP error! status: ${response.status}');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const result = await respone.json();
+                const result = await response.json();
                 setData(result);
             } catch (err) {
                 console.error("useAuthFetch error:", err);
@@ -40,7 +41,9 @@ export const useAuthFetch = (url, options = {}) => {
                 setLoading(false);
             }
         };
+
         fetchData();
-    },[url, user?.token]);
-    return {data, error, loading};
+    }, [url, user?.token]);
+
+    return { data, loading, error };
 };
