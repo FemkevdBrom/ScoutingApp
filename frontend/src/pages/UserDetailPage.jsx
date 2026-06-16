@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthFetch } from '../hooks/useAuthFetch';
 import { useAuthMutation } from '../hooks/useAuthMutation';
+import './ProfilePage.css';
 
 export default function UserDetailPage() {
     const { id } = useParams();
@@ -9,7 +10,6 @@ export default function UserDetailPage() {
 
     const { data: profile, loading, error } = useAuthFetch(`${process.env.REACT_APP_API_URL}/api/users/${id}`);
     const { data: parents } = useAuthFetch(`${process.env.REACT_APP_API_URL}/api/users/${id}/parents`);
-
     const { mutate } = useAuthMutation();
 
     const [editing, setEditing] = useState(false);
@@ -31,57 +31,77 @@ export default function UserDetailPage() {
         }
     };
 
-    if (loading) return <div>Laden...</div>;
-    if (error) return <div>Fout: {error}</div>;
+    const field = (label, key, type = 'text') => (
+        <label>
+            {label}
+            <input
+                type={type}
+                value={form[key] || ''}
+                onChange={e => setForm({ ...form, [key]: e.target.value })}
+            />
+        </label>
+    );
+
+    if (loading) return <div className="loading">Laden...</div>;
+    if (error) return <div className="error">Fout: {error}</div>;
     if (!profile) return <div>Gebruiker niet gevonden</div>;
 
     return (
-        <div className="user-detail-page">
-            <button onClick={() => navigate(-1)}>← Terug</button>
-            <h1>{profile.firstName} {profile.infix} {profile.lastName}</h1>
+        <div className="profile-page">
+            <button className="back-btn" onClick={() => navigate(-1)}>← Terug</button>
+            <h1 className="profile-title">{profile.firstName} {profile.infix} {profile.lastName}</h1>
 
             {editing ? (
-                <div className="edit-form">
-                    {/* ... alle inputs blijven hetzelfde ... */}
-                    <label>Voornaam <input value={form.firstName || ''} onChange={e => setForm({...form, firstName: e.target.value})} /></label>
-                    <label>Tussenvoegsel <input value={form.infix || ''} onChange={e => setForm({...form, infix: e.target.value})} /></label>
-                    <label>Achternaam <input value={form.lastName || ''} onChange={e => setForm({...form, lastName: e.target.value})} /></label>
-                    <label>Email <input value={form.email || ''} onChange={e => setForm({...form, email: e.target.value})} /></label>
-                    <label>Geboortedatum <input type="date" value={form.birthDate || ''} onChange={e => setForm({...form, birthDate: e.target.value})} /></label>
-                    <label>Straat <input value={form.street || ''} onChange={e => setForm({...form, street: e.target.value})} /></label>
-                    <label>Huisnummer <input value={form.houseNumber || ''} onChange={e => setForm({...form, houseNumber: e.target.value})} /></label>
-                    <label>Postcode <input value={form.postalCode || ''} onChange={e => setForm({...form, postalCode: e.target.value})} /></label>
-                    <label>Stad <input value={form.city || ''} onChange={e => setForm({...form, city: e.target.value})} /></label>
-                    <label>Land <input value={form.country || ''} onChange={e => setForm({...form, country: e.target.value})} /></label>
-
-                    <button onClick={handleSave}>Opslaan</button>
-                    <button onClick={() => setEditing(false)}>Annuleren</button>
+                <div className="info-card">
+                    <h2>Gegevens bewerken</h2>
+                    <div className="edit-form">
+                        {field('Voornaam', 'firstName')}
+                        {field('Tussenvoegsel', 'infix')}
+                        {field('Achternaam', 'lastName')}
+                        {field('Email', 'email')}
+                        {field('Geboortedatum', 'birthDate', 'date')}
+                        {field('Straat', 'street')}
+                        {field('Huisnummer', 'houseNumber')}
+                        {field('Postcode', 'postalCode')}
+                        {field('Stad', 'city')}
+                        {field('Land', 'country')}
+                    </div>
+                    <div className="actions">
+                        <button onClick={handleSave}>Opslaan</button>
+                        <button className="btn-secondary" onClick={() => setEditing(false)}>Annuleren</button>
+                    </div>
                 </div>
             ) : (
-                <div className="profile-info">
-                    <table>
-                        <tbody>
-                        <tr><td>Email</td><td>{profile.email}</td></tr>
-                        <tr><td>Geboortedatum</td><td>{profile.birthDate}</td></tr>
-                        <tr><td>Straat</td><td>{profile.street} {profile.houseNumber}</td></tr>
-                        <tr><td>Postcode</td><td>{profile.postalCode}</td></tr>
-                        <tr><td>Stad</td><td>{profile.city}</td></tr>
-                        <tr><td>Land</td><td>{profile.country}</td></tr>
-                        </tbody>
-                    </table>
-                    <button onClick={() => setEditing(true)}>Gegevens bewerken</button>
+                <div className="info-card">
+                    <h2>Gegevens</h2>
+                    <div className="info-grid">
+                        <div><strong>Email:</strong> {profile.email || '-'}</div>
+                        <div><strong>Geboortedatum:</strong> {profile.birthDate || '-'}</div>
+                        <div><strong>Straat:</strong> {profile.street} {profile.houseNumber}</div>
+                        <div><strong>Postcode:</strong> {profile.postalCode || '-'}</div>
+                        <div><strong>Stad:</strong> {profile.city || '-'}</div>
+                        <div><strong>Land:</strong> {profile.country || '-'}</div>
+                    </div>
+                    <div className="actions">
+                        <button onClick={() => setEditing(true)}>Gegevens bewerken</button>
+                    </div>
                 </div>
             )}
 
             {parents?.length > 0 && (
-                <section>
+                <div className="section">
                     <h2>Ouders</h2>
-                    <ul>
+                    <div className="cards-container">
                         {parents.map((p, i) => (
-                            <li key={i}>{p.firstName} {p.infix} {p.lastName} — {p.email}</li>
+                            <div key={i} className="person-card">
+                                <div>
+                                    <div className="card-name">{p.firstName} {p.infix} {p.lastName}</div>
+                                    <div className="card-role">{p.email}</div>
+                                </div>
+                            </div>
                         ))}
-                    </ul>
-                </section>
+                    </div>
+                </div>
             )}
         </div>
     );

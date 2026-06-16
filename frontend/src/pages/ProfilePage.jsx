@@ -1,27 +1,58 @@
-import React, {useContext} from "react";
-import UserProfile from "../components/user/UserProfile";
-import {AuthContext} from "../context/AuthContext";
-
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { useAuthFetch } from "../hooks/useAuthFetch";
+import './ProfilePage.css';
 
 export default function ProfilePage() {
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    if (!user) return <div>Loading...</div>;
+    const { data: groups } = useAuthFetch(
+        user?.id
+            ? `${process.env.REACT_APP_API_URL}/api/groups/my?userId=${user.id}`
+            : null
+    );
+
+    if (!user) return <div className="loading">Laden...</div>;
 
     return (
         <div className="profile-page">
-            <h1>Mijn Profiel</h1>
-            <table>
-                <tbody>
-                <tr><td>Naam</td><td>{user.firstName} {user.infix} {user.lastName}</td></tr>
-                <tr><td>Email</td><td>{user.email}</td></tr>
-                <tr><td>Geboortedatum</td><td>{user.birthDate}</td></tr>
-                <tr><td>Straat</td><td>{user.street} {user.houseNumber}</td></tr>
-                <tr><td>Postcode</td><td>{user.postalCode}</td></tr>
-                <tr><td>Stad</td><td>{user.city}</td></tr>
-                <tr><td>Land</td><td>{user.country}</td></tr>
-                </tbody>
-            </table>
+            <h1 className="profile-title">{user.firstName} {user.infix} {user.lastName}</h1>
+
+            <div className="info-card">
+                <h2>Mijn gegevens</h2>
+                <div className="info-grid">
+                    <div><strong>Email:</strong> {user.email || '-'}</div>
+                    <div><strong>Geboortedatum:</strong> {user.birthDate || '-'}</div>
+                    <div><strong>Straat:</strong> {user.street} {user.houseNumber}</div>
+                    <div><strong>Postcode:</strong> {user.postalCode || '-'}</div>
+                    <div><strong>Stad:</strong> {user.city || '-'}</div>
+                    <div><strong>Land:</strong> {user.country || '-'}</div>
+                </div>
+            </div>
+
+            {groups?.length > 0 && (
+                <div className="section">
+                    <h2>Mijn groepen</h2>
+                    <div className="cards-container">
+                        {groups?.map((g) => (
+                            <div
+                                key={g.id}
+                                className="person-card clickable"
+                                style={{ borderLeft: `4px solid ${g.colorHex}` }}
+                                onClick={() => navigate(`/groups/${g.id}`)}
+                            >
+                                <div>
+                                    <div className="card-name">{g.name}</div>
+                                    {g.description && <div className="card-role">{g.description}</div>}
+                                </div>
+                                <span className="card-arrow">→</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
