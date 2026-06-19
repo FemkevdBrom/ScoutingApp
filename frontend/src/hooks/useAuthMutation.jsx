@@ -29,12 +29,14 @@ export const useAuthMutation = () => {
                 throw new Error(message || `HTTP error! status: ${response.status}`);
             }
 
-            // Probeer JSON te parsen, maar niet alle responses hebben body
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-                return await response.json();
+            const text = await response.text();
+            if (!text) return null;
+
+            try {
+                return JSON.parse(text);
+            } catch {
+                return text;
             }
-            return await response.text();
         } catch (err) {
             console.error("useAuthMutation error:", err);
             setError(err.message);
