@@ -6,16 +6,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Haal token uit localStorage bij opstarten
-    useEffect(() => {
-        const savedToken = localStorage.getItem("token");
-        if (savedToken) {
-            setUser({ token: savedToken });
-        } else {
-            setLoading(false);
-        }
-    }, []);
-
     const fetchUserFromToken = async (token) => {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
@@ -31,8 +21,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
-
+    useEffect(() => {
+        const savedToken = localStorage.getItem("token");
+        if (savedToken) {
+            fetchUserFromToken(savedToken);
+        } else {
+            setLoading(false);
+        }
+    }, []);
 
     const login = async (token) => {
         localStorage.setItem("token", token);
