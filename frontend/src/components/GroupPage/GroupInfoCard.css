@@ -25,7 +25,7 @@
 
 .description {
     grid-column: 1 / -1;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #d1d1d1;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d1d1d1;
 }

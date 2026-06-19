@@ -9,7 +9,7 @@ export default function PersonCard({ person, onClick, isClickable }) {
         >
             <div className="person-info">
                 <div className="person-name">{person.fullName}</div>
-                {person.role && <div className="person-role">{person.role}</div>}
+                {person.role && <div className="person-role">{person.role}{person.age ? ` · ${person.age} jaar` : ''}</div>}
             </div>
             {isClickable && <span className="arrow">→</span>}
         </div>

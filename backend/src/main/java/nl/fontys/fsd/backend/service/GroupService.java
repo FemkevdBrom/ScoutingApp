@@ -2,6 +2,9 @@ package nl.fontys.fsd.backend.service;
 
 import nl.fontys.fsd.backend.dto.*;
 import nl.fontys.fsd.backend.model.Group;
+import nl.fontys.fsd.backend.model.GroupEnum.GroupGender;
+import nl.fontys.fsd.backend.model.GroupEnum.GroupStatus;
+import nl.fontys.fsd.backend.model.GroupEnum.GroupType;
 import nl.fontys.fsd.backend.model.Role;
 import nl.fontys.fsd.backend.model.User;
 import nl.fontys.fsd.backend.model.UserGroup;
@@ -64,7 +67,7 @@ public class GroupService {
 
         GroupInfoDTO info = buildGroupInfo(group);
 
-        return new GroupDetailsDTO(group.getName(), leaders, members, info, userRole);
+        return new GroupDetailsDTO(group.getName(), group.getColorHex(), leaders, members, info, userRole);
     }
 
     public void updateGroup(Long groupId, Long requestingUserId, GroupUpdateDTO dto) {
@@ -85,6 +88,9 @@ public class GroupService {
         if (dto.getGroupEmail() != null) group.setEmail(dto.getGroupEmail());
         if (dto.getGroupAge() != null) group.setGroupAge(dto.getGroupAge());
         if (dto.getColor() != null) group.setColorHex(dto.getColor());
+        if (dto.getGroupType() != null) group.setGroupType(GroupType.valueOf(dto.getGroupType()));
+        if (dto.getGroupStatus() != null) group.setGroupStatus(GroupStatus.valueOf(dto.getGroupStatus()));
+        if (dto.getGroupGender() != null) group.setGroupGender(GroupGender.valueOf(dto.getGroupGender()));
 
         groupRepository.save(group);
     }
@@ -157,7 +163,12 @@ public class GroupService {
                 getFullName(u.getFirstName(), u.getInfix(), u.getLastName()),
                 ug.getRole().getName(),
                 u.getBirthDate(),
-                calculateAge(u.getBirthDate())
+                calculateAge(u.getBirthDate()),
+                u.getStreet(),
+                u.getHouseNumber(),
+                u.getPostalCode(),
+                u.getCity(),
+                u.getCountry()
         );
     }
 
@@ -172,6 +183,7 @@ public class GroupService {
                 group.getGroupType() != null ? group.getGroupType().name() : "-",
                 group.getGroupStatus() != null ? group.getGroupStatus().name() : "-",
                 defaultValue(group.getGroupAge()),
+                group.getGroupGender() != null ? group.getGroupGender().name() : "-",
                 scoutingGroupName
         );
     }

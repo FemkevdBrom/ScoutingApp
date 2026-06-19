@@ -11,5 +11,6 @@ public class GroupUpdateDTO {
     private String groupAge;
     private String groupType;
     private String groupStatus;
+    private String groupGender;
     private String color;
 }

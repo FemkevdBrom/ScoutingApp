@@ -18,7 +18,6 @@ public class UserResponseDTO {
     private String houseNumber;
     private String postalCode;
     private String city;
-    private String state;
     private String country;
     private LocalDate birthDate;
 
@@ -32,6 +31,7 @@ public class UserResponseDTO {
         this.houseNumber = user.getHouseNumber();
         this.postalCode = user.getPostalCode();
         this.city = user.getCity();
+        this.country = user.getCountry();
         this.birthDate = user.getBirthDate();
         }
 }

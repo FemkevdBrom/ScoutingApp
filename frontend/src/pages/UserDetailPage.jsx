@@ -4,6 +4,12 @@ import { useAuthFetch } from '../hooks/useAuthFetch';
 import { useAuthMutation } from '../hooks/useAuthMutation';
 import './ProfilePage.css';
 
+function formatDateNL(dateStr) {
+    if (!dateStr) return '-';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 export default function UserDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -76,8 +82,8 @@ export default function UserDetailPage() {
                     <h2>Gegevens</h2>
                     <div className="info-grid">
                         <div><strong>Email:</strong> {profile.email || '-'}</div>
-                        <div><strong>Geboortedatum:</strong> {profile.birthDate || '-'}</div>
-                        <div><strong>Straat:</strong> {profile.street} {profile.houseNumber}</div>
+                        <div><strong>Geboortedatum:</strong> {formatDateNL(profile.birthDate)}</div>
+                        <div><strong>Straat:</strong> {profile.street || '-'} {profile.houseNumber || ''}</div>
                         <div><strong>Postcode:</strong> {profile.postalCode || '-'}</div>
                         <div><strong>Stad:</strong> {profile.city || '-'}</div>
                         <div><strong>Land:</strong> {profile.country || '-'}</div>

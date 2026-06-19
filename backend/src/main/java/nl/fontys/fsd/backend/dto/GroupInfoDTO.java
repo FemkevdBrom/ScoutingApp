@@ -11,7 +11,7 @@ public class GroupInfoDTO {
     private String groupEmail;
     private String groupType;
     private String groupStatus;
-    private String ageGroup;
+    private String groupAge;
     private String groupGender;
     private String scoutingGroup;
 
@@ -27,7 +27,7 @@ public class GroupInfoDTO {
         this.groupEmail = email;
         this.groupType = groupType;
         this.groupStatus = groupStatus;
-        this.ageGroup = groupAge;
+        this.groupAge = groupAge;
         this.scoutingGroup = scoutingGroup;
     }
 }

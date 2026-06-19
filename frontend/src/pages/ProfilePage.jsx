@@ -4,6 +4,12 @@ import { AuthContext } from "../context/AuthContext";
 import { useAuthFetch } from "../hooks/useAuthFetch";
 import './ProfilePage.css';
 
+function formatDateNL(dateStr) {
+    if (!dateStr) return '-';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 export default function ProfilePage() {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -24,8 +30,8 @@ export default function ProfilePage() {
                 <h2>Mijn gegevens</h2>
                 <div className="info-grid">
                     <div><strong>Email:</strong> {user.email || '-'}</div>
-                    <div><strong>Geboortedatum:</strong> {user.birthDate || '-'}</div>
-                    <div><strong>Straat:</strong> {user.street} {user.houseNumber}</div>
+                    <div><strong>Geboortedatum:</strong> {formatDateNL(user.birthDate)}</div>
+                    <div><strong>Straat:</strong> {user.street || '-'} {user.houseNumber || ''}</div>
                     <div><strong>Postcode:</strong> {user.postalCode || '-'}</div>
                     <div><strong>Stad:</strong> {user.city || '-'}</div>
                     <div><strong>Land:</strong> {user.country || '-'}</div>
@@ -36,7 +42,7 @@ export default function ProfilePage() {
                 <div className="section">
                     <h2>Mijn groepen</h2>
                     <div className="cards-container">
-                        {groups?.map((g) => (
+                        {groups.map((g) => (
                             <div
                                 key={g.id}
                                 className="person-card clickable"
@@ -45,7 +51,7 @@ export default function ProfilePage() {
                             >
                                 <div>
                                     <div className="card-name">{g.name}</div>
-                                    {g.description && <div className="card-role">{g.description}</div>}
+                                    {g.roleName && <div className="card-role">{g.roleName}</div>}
                                 </div>
                                 <span className="card-arrow">→</span>
                             </div>
