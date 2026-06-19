@@ -4,9 +4,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-
 public class GroupInfoDTO {
-    private String groupName;
     private String groupDescription;
     private String groupEmail;
     private String groupType;
@@ -22,12 +20,14 @@ public class GroupInfoDTO {
                         String groupType,
                         String groupStatus,
                         String groupAge,
+                        String groupGender,
                         String scoutingGroup) {
         this.groupDescription = description;
         this.groupEmail = email;
         this.groupType = groupType;
         this.groupStatus = groupStatus;
         this.groupAge = groupAge;
+        this.groupGender = groupGender;
         this.scoutingGroup = scoutingGroup;
     }
 }
