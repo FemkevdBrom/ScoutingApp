@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import UserProfile from './UserProfile';
+import UserProfile from '../../components/user/UserProfile';
 import * as UserService from '../../services/UserService';
 
 // Mock de externe service

@@ -130,64 +130,64 @@ function RegisterPage() {
             {/* Persoonsgegevens */}
             <h3>Persoonsgegevens</h3>
 
-            <label>Voornaam *</label>
-            <input name="firstName" value={form.firstName} onChange={handleChange} />
+            <label htmlFor="firstName">Voornaam *</label>
+            <input id="firstName" name="firstName" value={form.firstName} onChange={handleChange} />
             {errors.firstName && <p style={{ color: "red" }}>{errors.firstName}</p>}
 
-            <label>Tussenvoegsel</label>
-            <input name="infix" value={form.infix} onChange={handleChange} />
+            <label htmlFor="infix">Tussenvoegsel</label>
+            <input id="infix" name="infix" value={form.infix} onChange={handleChange} />
 
-            <label>Achternaam *</label>
-            <input name="lastName" value={form.lastName} onChange={handleChange} />
+            <label htmlFor="lastName">Achternaam *</label>
+            <input id="lastName" name="lastName" value={form.lastName} onChange={handleChange} />
             {errors.lastName && <p style={{ color: "red" }}>{errors.lastName}</p>}
 
-            <label>Geboortedatum *</label>
-            <input type="date" name="birthDate" value={form.birthDate} onChange={handleChange} />
+            <label htmlFor="birthDate">Geboortedatum *</label>
+            <input id="birthDate" type="date" name="birthDate" value={form.birthDate} onChange={handleChange} />
             {errors.birthDate && <p style={{ color: "red" }}>{errors.birthDate}</p>}
 
             {/* Adres */}
             <h3>Adres</h3>
 
-            <label>Straat *</label>
-            <input name="street" value={form.street} onChange={handleChange} />
+            <label htmlFor="street">Straat *</label>
+            <input id="street" name="street" value={form.street} onChange={handleChange} />
             {errors.street && <p style={{ color: "red" }}>{errors.street}</p>}
 
-            <label>Huisnummer *</label>
-            <input name="houseNumber" value={form.houseNumber} onChange={handleChange} />
+            <label htmlFor="houseNumber">Huisnummer *</label>
+            <input id="houseNumber" name="houseNumber" value={form.houseNumber} onChange={handleChange} />
             {errors.houseNumber && <p style={{ color: "red" }}>{errors.houseNumber}</p>}
 
-            <label>Postcode *</label>
-            <input name="postalCode" value={form.postalCode} onChange={handleChange} />
+            <label htmlFor="postalCode">Postcode *</label>
+            <input id="postalCode" name="postalCode" value={form.postalCode} onChange={handleChange} />
             {errors.postalCode && <p style={{ color: "red" }}>{errors.postalCode}</p>}
 
-            <label>Stad *</label>
-            <input name="city" value={form.city} onChange={handleChange} />
+            <label htmlFor="city">Stad *</label>
+            <input id="city" name="city" value={form.city} onChange={handleChange} />
             {errors.city && <p style={{ color: "red" }}>{errors.city}</p>}
 
-            <label>Land *</label>
-            <input name="country" value={form.country} onChange={handleChange} />
+            <label htmlFor="country">Land *</label>
+            <input id="country" name="country" value={form.country} onChange={handleChange} />
             {errors.country && <p style={{ color: "red" }}>{errors.country}</p>}
 
             {/* Account */}
             <h3>Accountgegevens</h3>
 
-            <label>Email *</label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} />
+            <label htmlFor="email">Email *</label>
+            <input id="email" type="email" name="email" value={form.email} onChange={handleChange} />
             {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
 
-            <label>Wachtwoord *</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} />
+            <label htmlFor="password">Wachtwoord *</label>
+            <input id="password" type="password" name="password" value={form.password} onChange={handleChange} />
             {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
 
-            <label>Herhaal wachtwoord *</label>
-            <input type="password" name="passwordCheck" value={form.passwordCheck} onChange={handleChange} />
+            <label htmlFor="passwordCheck">Herhaal wachtwoord *</label>
+            <input id="passwordCheck" type="password" name="passwordCheck" value={form.passwordCheck} onChange={handleChange} />
             {errors.passwordCheck && <p style={{ color: "red" }}>{errors.passwordCheck}</p>}
 
             {/* Scoutinggroep */}
             <h3>Scoutinggroep</h3>
 
-            <label>Scoutinggroep *</label>
-            <select name="scoutingGroupId" value={form.scoutingGroupId} onChange={handleChange}>
+            <label htmlFor="scoutingGroupId">Scoutinggroep *</label>
+            <select id="scoutingGroupId" name="scoutingGroupId" value={form.scoutingGroupId} onChange={handleChange}>
                 <option value="">-- Kies een scoutinggroep --</option>
                 {scoutingGroups.map((sg) => (
                     <option key={sg.id} value={sg.id}>
