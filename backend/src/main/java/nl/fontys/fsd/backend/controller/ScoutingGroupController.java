@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/auth/scouting-groups")
-@CrossOrigin(origins = "https://scouting-app-iota.vercel.app")
 public class ScoutingGroupController {
 
     private final ScoutingGroupService scoutingGroupService;

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "https://scouting-app-iota.vercel.app")
 public class AuthController {
 
     private final AuthService authService;

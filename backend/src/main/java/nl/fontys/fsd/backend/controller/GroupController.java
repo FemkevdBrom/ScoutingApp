@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
-@CrossOrigin(origins = "https://scouting-app-iota.vercel.app")
 public class GroupController {
 
     private final GroupService groupService;
