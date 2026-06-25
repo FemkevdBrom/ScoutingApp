@@ -58,7 +58,7 @@ jobs:
       # ================ SONARCLOUD ANALYSE ====================
       - name: SonarCloud Analysis
         working-directory: ./backend
-        run: ./gradlew sonar --no-daemon
+        run: ./gradlew test jacocoTestReport sonar --no-daemon
         env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             SONAR_HOST_URL: https://sonarcloud.io
