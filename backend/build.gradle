@@ -70,7 +70,7 @@ sonar {
 }
 
 jacocoTestReport {
-    depensOn test
+    dependsOn test
     reports {
         xml.required = true
     }
