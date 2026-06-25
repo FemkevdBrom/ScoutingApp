@@ -1,5 +1,6 @@
 package nl.fontys.fsd.backend;
 
+import nl.fontys.fsd.backend.dto.UserRequestDTO;
 import nl.fontys.fsd.backend.model.ParentChild;
 import nl.fontys.fsd.backend.model.User;
 import nl.fontys.fsd.backend.repository.ParentChildRepository;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -29,17 +29,16 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-
     @Mock
     private ParentChildRepository parentChildRepository;
 
-
     @InjectMocks
     private UserService userService;
+
     private User existingUser;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         existingUser = new User();
         existingUser.setId(5L);
         existingUser.setFirstName("Jan");
@@ -52,6 +51,7 @@ class UserServiceTest {
         existingUser.setCity("Eindhoven");
         existingUser.setCountry("Nederland");
     }
+
     @Test
     void getAllUsers_shouldReturnAllUsers() {
         List<User> users = List.of(new User(), new User());
@@ -77,15 +77,18 @@ class UserServiceTest {
 
     @Test
     void createUser_shouldHashPassword_andSaveUser() {
-        User newUser = new User();
-        newUser.setPassword("plainpassword");
+        UserRequestDTO dto = new UserRequestDTO();
+        dto.setPassword("plainpassword");
+        dto.setFirstName("Jan");
+        dto.setEmail("jan@test.nl");
 
         when(passwordEncoder.encode("plainpassword")).thenReturn("hashedpassword");
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
-        userService.createUser(newUser);
+        User result = userService.createUser(dto);
 
-        assertEquals("hashedpassword", newUser.getPassword());
-        verify(userRepository, times(1)).save(newUser);
+        assertEquals("hashedpassword", result.getPassword());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
@@ -99,14 +102,14 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldUpdateFields_whenUserExists() {
-        User updatedUser = new User();
-        updatedUser.setFirstName("Piet");
-        updatedUser.setCity("Amsterdam");
+        UserRequestDTO dto = new UserRequestDTO();
+        dto.setFirstName("Piet");
+        dto.setCity("Amsterdam");
 
         when(userRepository.findById(5L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
-        userService.updateUser(5L, updatedUser);
+        userService.updateUser(5L, dto);
 
         assertEquals("Piet", existingUser.getFirstName());
         assertEquals("Amsterdam", existingUser.getCity());
@@ -115,14 +118,14 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldNotOverwriteFields_whenValuesAreNull() {
-        User updatedUser = new User();
-        updatedUser.setFirstName(null);
-        updatedUser.setLastName(null);
+        UserRequestDTO dto = new UserRequestDTO();
+        dto.setFirstName(null);
+        dto.setLastName(null);
 
         when(userRepository.findById(5L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
-        userService.updateUser(5L, updatedUser);
+        userService.updateUser(5L, dto);
 
         assertEquals("Jan", existingUser.getFirstName());
         assertEquals("Jansen", existingUser.getLastName());

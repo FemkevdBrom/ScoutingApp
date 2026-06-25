@@ -1,14 +1,14 @@
 package nl.fontys.fsd.backend.service;
 
+import nl.fontys.fsd.backend.dto.UserRequestDTO;
 import nl.fontys.fsd.backend.model.User;
+import nl.fontys.fsd.backend.model.ParentChild;
+import nl.fontys.fsd.backend.repository.ParentChildRepository;
 import nl.fontys.fsd.backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import nl.fontys.fsd.backend.model.ParentChild;
-import nl.fontys.fsd.backend.repository.ParentChildRepository;
 
 import java.util.List;
-
 
 @Service
 public class UserService {
@@ -20,7 +20,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.parentChildRepository = parentChildRepository;
-
     }
 
     public List<User> getAllUsers() {
@@ -31,8 +30,19 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User createUser(User user) {
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
+    public User createUser(UserRequestDTO dto) {
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setInfix(dto.getInfix());
+        user.setLastName(dto.getLastName());
+        user.setBirthDate(dto.getBirthDate());
+        user.setEmail(dto.getEmail());
+        user.setStreet(dto.getStreet());
+        user.setPostalCode(dto.getPostalCode());
+        user.setHouseNumber(dto.getHouseNumber());
+        user.setCity(dto.getCity());
+        user.setCountry(dto.getCountry());
+        String hashedPassword = passwordEncoder.encode(dto.getPassword());
         user.setPassword(hashedPassword);
         return userRepository.save(user);
     }
@@ -40,26 +50,25 @@ public class UserService {
     public List<User> getParentsForUser(Long childId) {
         return parentChildRepository.findByChildId(childId)
                 .stream()
-                .map(pc -> pc.getParent())
+                .map(ParentChild::getParent)
                 .toList();
     }
 
-    public User updateUser(Long id, User updatedUser) {
+    public User updateUser(Long id, UserRequestDTO dto) {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Gebruiker niet gevonden"));
 
-        if (updatedUser.getFirstName() != null) existing.setFirstName(updatedUser.getFirstName());
-        if (updatedUser.getInfix() != null) existing.setInfix(updatedUser.getInfix());
-        if (updatedUser.getLastName() != null) existing.setLastName(updatedUser.getLastName());
-        if (updatedUser.getEmail() != null) existing.setEmail(updatedUser.getEmail());
-        if (updatedUser.getBirthDate() != null) existing.setBirthDate(updatedUser.getBirthDate());
-        if (updatedUser.getStreet() != null) existing.setStreet(updatedUser.getStreet());
-        if (updatedUser.getHouseNumber() != null) existing.setHouseNumber(updatedUser.getHouseNumber());
-        if (updatedUser.getPostalCode() != null) existing.setPostalCode(updatedUser.getPostalCode());
-        if (updatedUser.getCity() != null) existing.setCity(updatedUser.getCity());
-        if (updatedUser.getCountry() != null) existing.setCountry(updatedUser.getCountry());
+        if (dto.getFirstName() != null) existing.setFirstName(dto.getFirstName());
+        if (dto.getInfix() != null) existing.setInfix(dto.getInfix());
+        if (dto.getLastName() != null) existing.setLastName(dto.getLastName());
+        if (dto.getEmail() != null) existing.setEmail(dto.getEmail());
+        if (dto.getBirthDate() != null) existing.setBirthDate(dto.getBirthDate());
+        if (dto.getStreet() != null) existing.setStreet(dto.getStreet());
+        if (dto.getHouseNumber() != null) existing.setHouseNumber(dto.getHouseNumber());
+        if (dto.getPostalCode() != null) existing.setPostalCode(dto.getPostalCode());
+        if (dto.getCity() != null) existing.setCity(dto.getCity());
+        if (dto.getCountry() != null) existing.setCountry(dto.getCountry());
 
         return userRepository.save(existing);
     }
 }
-

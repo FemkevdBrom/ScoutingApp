@@ -1,21 +1,15 @@
 package nl.fontys.fsd.backend.controller;
 
-
+import nl.fontys.fsd.backend.dto.UserRequestDTO;
 import nl.fontys.fsd.backend.dto.UserResponseDTO;
-import nl.fontys.fsd.backend.repository.UserRepository;
 import nl.fontys.fsd.backend.security.JwtService;
 import nl.fontys.fsd.backend.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import nl.fontys.fsd.backend.model.User;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-
-
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/users")
@@ -38,9 +32,10 @@ public class UserController {
     public User getUser(@PathVariable Long id) {
         return userService.getUser(id);
     }
+
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public User createUser(@RequestBody UserRequestDTO userDTO) {
+        return userService.createUser(userDTO);
     }
 
     @GetMapping("/me")
@@ -53,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO updatedUser) {
         return ResponseEntity.ok(userService.updateUser(id, updatedUser));
     }
 
@@ -65,6 +60,4 @@ public class UserController {
                 .toList();
         return ResponseEntity.ok(dtos);
     }
-
 }
-
