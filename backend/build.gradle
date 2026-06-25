@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.5'
     id 'io.spring.dependency-management' version '1.1.7'
-    id "org.sonarqube" version "6.0.0.5145"
+    id "org.sonarqube" version "7.3.1.8318"
 }
 
 group = 'nl.fontys.fsd'
@@ -63,6 +63,5 @@ sonar {
         property "sonar.sources", "src/main/java"
         property "sonar.tests", "src/test/java"
         property "sonar.java.binaries", "build/classes"
-        property "sonar.gradle.skipCompile", "true"
     }
 }
